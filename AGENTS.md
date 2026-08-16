@@ -1,7 +1,7 @@
 # AGENTS.md — Contexto del proyecto
 
 ## Qué es
-Gestor de proyectos de marketing (ver `BRIEF.md`): app web MVC en Node.js + TypeScript + Express, vistas Handlebars con Bootstrap. Usuarios se registran y publican/editan/eliminan sus propios proyectos; la lectura es pública. Solo el creador (`created_by`) modifica su proyecto.
+Gestor de proyectos de marketing: app web MVC en Node.js + TypeScript + Express, vistas Handlebars con Bootstrap. Usuarios se registran y publican/editan/eliminan sus propios proyectos; la lectura es pública. Solo el creador (`created_by`) modifica su proyecto.
 
 Modelos: Usuario (id, nombre, apellido, correo único, password hasheada con Argon2), Proyecto (id, nombre, descripcion, fechaInicio, estado, monto en CLP entero, created_by).
 
