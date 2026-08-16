@@ -6,7 +6,7 @@ Gestor de proyectos de marketing (ver `BRIEF.md`): app web MVC en Node.js + Type
 Modelos: Usuario (id, nombre, apellido, correo único, password hasheada con Argon2), Proyecto (id, nombre, descripcion, fechaInicio, estado, monto en CLP entero, created_by).
 
 ## Estado actual
-Persistencia: **Prisma ORM 7 + SQLite** (`dev.db` en raíz, vía driver adapter `@prisma/adapter-better-sqlite3`). Cliente singleton en `src/db.ts` (`export const prisma`); cliente generado en `src/generated/prisma` (gitignored, regenerar con `npx prisma generate`). **Auth implementada**: registro/login/logout con Argon2 + JWT en cookie httpOnly SameSite=Lax (`src/auth.ts`: `loadUser` deja el usuario en `res.locals.usuario`, `requireAuthView` redirige a /login, `requireAuthApi` da 401). **CRUD de proyectos** en vistas y API: lectura pública, creación autenticada, edición/eliminación solo del creador (403 si no). Diseño editorial propio según `PLAN.md` y `FRONTEND-DESIGN.md` (estilos inline en el layout).
+Persistencia: **Prisma ORM 7 + SQLite** (`dev.db` en raíz, vía driver adapter `@prisma/adapter-better-sqlite3`). Cliente singleton en `src/models/db.ts` (`export const prisma`); cliente generado en `src/generated/prisma` (gitignored, regenerar con `npx prisma generate`). **Auth implementada**: registro/login/logout con Argon2 + JWT en cookie httpOnly SameSite=Lax (`src/auth.ts`: `loadUser` deja el usuario en `res.locals.usuario`, `requireAuthView` redirige a /login, `requireAuthApi` da 401). **CRUD de proyectos** en vistas y API: lectura pública, creación autenticada, edición/eliminación solo del creador (403 si no).
 
 ## Decisiones técnicas (respetar)
 - **Node 24 ejecuta TypeScript nativamente** (type stripping). No hay tsx/ts-node ni paso de build. Consecuencias:
@@ -18,31 +18,35 @@ Persistencia: **Prisma ORM 7 + SQLite** (`dev.db` en raíz, vía driver adapter 
 - **Bootstrap por CDN** en el layout. No hay assets propios ni pipeline de frontend.
 - **Prisma ORM 7 + SQLite**. Particularidades de v7 (no aplicar guías de v6):
   - Requiere driver adapter: `@prisma/adapter-better-sqlite3`, export `PrismaBetterSqlite3` (minúsculas).
-  - Generador `prisma-client` (TS plano) con output en `src/generated/prisma`; se importa `./generated/prisma/client.ts`.
+  - Generador `prisma-client` (TS plano) con output en `src/generated/prisma`; se importa desde `src/models/db.ts`.
   - `prisma.config.ts` obligatorio; carga `.env` vía `import "dotenv/config"` (v7 no lo hace solo).
   - `npx prisma migrate dev` **no** regenera el cliente: correr `npx prisma generate` después.
   - `DATABASE_URL="file:./dev.db"` se resuelve relativo a la raíz → ejecutar siempre desde la raíz (los scripts npm lo hacen).
 - **tsconfig**: `"types": ["node"]` explícito e `include: ["src", "prisma.config.ts"]` (sin esto, el editor no resuelve `process` en el config de Prisma).
 - **npm**: política allowScripts activa; los install scripts de `argon2`, `better-sqlite3`, `prisma` y `@prisma/engines` ya están aprobados.
 
-## Estructura
+## Estructura (MVC)
 ```
 src/app.ts            # bootstrap: handlebars engine (+helpers eq/fecha/clp), parsers, cookie-parser, loadUser, routers, PORT (default 3000)
-src/auth.ts           # argon2 hash/verify, cookie JWT, loadUser, requireAuthView/requireAuthApi
+src/auth.ts           # argon2 hash/verify, cookie JWT, loadUser, requireAuthView/requireAuthApi (middleware)
 src/validar.ts        # validación de proyecto (compartida vistas/API); monto = CLP entero
-src/db.ts             # singleton PrismaClient (adapter better-sqlite3, lee DATABASE_URL de .env)
-src/routes/index.ts   # viewRoutes — rutas de VISTAS, en root (auth + CRUD proyectos)
-src/routes/api.ts     # apiRoutes — rutas de API (/api/auth/*, /api/proyectos/*)
+src/models/db.ts      # singleton PrismaClient (adapter better-sqlite3, lee DATABASE_URL de .env) — capa de modelo
+src/controllers/      # handlers de VISTAS: homeController, authController, proyectoController
+src/controllers/api/  # handlers de API JSON: authController, proyectoController
+src/routes/index.ts   # viewRoutes — solo cablea rutas de VISTAS a controllers, en root
+src/routes/api.ts     # apiRoutes — cablea rutas de API a controllers (/api/auth/*, /api/proyectos/*); /health va inline
 src/views/            # layouts/main.handlebars (estilos inline), home, registro, login, proyectos/{lista,form}
 prisma/schema.prisma  # modelos Usuario/Proyecto
 prisma.config.ts      # v7: datasource url + dotenv; DATABASE_URL="file:./dev.db"
 ```
 
-## Convención de rutas (acordada con el usuario)
-- Vistas → root, en `src/routes/index.ts` (export `viewRoutes`).
-- API → detrás de `/api`, en `src/routes/api.ts` (export `apiRoutes`).
+## Convención MVC (acordada con el usuario)
+- **Rutas delgadas**: los routers solo declaran ruta → middleware → controller; la lógica vive en `src/controllers`.
+- Vistas → root, en `src/routes/index.ts` (export `viewRoutes`) con controllers en `src/controllers/`.
+- API → detrás de `/api`, en `src/routes/api.ts` (export `apiRoutes`) con controllers en `src/controllers/api/`.
 - Montaje en `app.ts`: `app.use(viewRoutes); app.use("/api", apiRoutes)`.
-- Nuevas rutas van en el archivo que corresponda; no mezclar.
+- Nuevas rutas van en el archivo que corresponda; no mezclar. Lógica nueva → controller correspondiente, no en el router.
+- Modelo: `prisma/schema.prisma` define Usuario/Proyecto; acceso siempre vía `src/models/db.ts`.
 
 ## Comandos
 - `npm run dev` — `node --watch src/app.ts` (auto-reload en cambios de código).
@@ -53,6 +57,7 @@ prisma.config.ts      # v7: datasource url + dotenv; DATABASE_URL="file:./dev.db
 
 ## Notas operativas
 - Puerto: `process.env.PORT` o 3000.
+- `.env` requiere `DATABASE_URL` (Prisma) y `JWT_SECRET` (auth.ts falla al arrancar sin él).
 - Las vistas Handlebars se re-renderizan por petición fuera de producción (NODE_ENV sin definir) → cambios en `.handlebars` no requieren reinicio; cambios en `.ts` sí (salvo con `--watch`).
 - Verificación habitual tras cambios: typecheck + levantar server + `curl /` y `curl /api/health`.
 

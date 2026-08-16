@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import type { NextFunction, Request, Response } from "express";
-import { prisma } from "./db.ts";
+import { prisma } from "./models/db.ts";
 
 const JWT_SECRET = process.env["JWT_SECRET"]!;
 const COOKIE = "token";
