@@ -1,0 +1,29 @@
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <p class="micro mb-1">Cuenta nueva</p>
+    <h1 class="h2 mb-4">Crear cuenta</h1>
+    {{#if error}}<div class="alerta mb-4">{{error}}</div>{{/if}}
+    <form method="post" action="/registro">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="micro d-block mb-2" for="nombre">Nombre</label>
+          <input class="form-control" id="nombre" name="nombre" value="{{nombre}}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="micro d-block mb-2" for="apellido">Apellido</label>
+          <input class="form-control" id="apellido" name="apellido" value="{{apellido}}" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="micro d-block mb-2" for="correo">Correo</label>
+        <input class="form-control" id="correo" type="email" name="correo" value="{{correo}}" required>
+      </div>
+      <div class="mb-4">
+        <label class="micro d-block mb-2" for="password">Contraseña</label>
+        <input class="form-control" id="password" type="password" name="password" minlength="6" required>
+      </div>
+      <button class="btn-ink w-100" type="submit">Registrarme</button>
+    </form>
+    <p class="mt-3" style="font-size: .9rem; color: var(--muted)">¿Ya tienes cuenta? <a href="/login">Ingresa</a></p>
+  </div>
+</div>

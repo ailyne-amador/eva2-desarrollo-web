@@ -1,0 +1,35 @@
+{
+  "name": "eva2_devweb",
+  "version": "1.0.0",
+  "description": "Gestor de proyectos de marketing",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/app.ts",
+    "start": "node src/app.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "argon2": "^0.45.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-handlebars": "^9.0.1",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.2.0",
+    "prisma": "^7.9.1",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "argon2@0.45.1": true,
+    "better-sqlite3@12.11.1": true,
+    "prisma@7.9.1": true,
+    "@prisma/engines@7.9.1": true
+  }
+}

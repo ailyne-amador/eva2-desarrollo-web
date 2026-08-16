@@ -1,0 +1,26 @@
+<section class="py-4">
+  <p class="micro mb-3">Gestión de campañas</p>
+  <h1 style="font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: .98; max-width: 15ch">Tus proyectos de marketing, en orden.</h1>
+  <p class="mt-4" style="max-width: 46ch; color: var(--muted)">Publica campañas, controla fechas, estados y montos, y comparte el avance. La lectura es pública; la edición, solo del creador.</p>
+  <div class="d-flex gap-3 mt-4">
+    <a href="/proyectos" class="btn-ink text-decoration-none">Ver proyectos</a>
+    {{#unless usuario}}<a href="/registro" class="btn-line text-decoration-none">Crear cuenta</a>{{/unless}}
+  </div>
+</section>
+<section class="row mt-5 pt-5 rule g-4">
+  <div class="col-md-4">
+    <p class="num mb-1">01</p>
+    <h2 class="h5">Publica</h2>
+    <p style="color: var(--muted); font-size: .95rem">Registra tu proyecto con fecha de inicio, estado y monto asignado.</p>
+  </div>
+  <div class="col-md-4">
+    <p class="num mb-1">02</p>
+    <h2 class="h5">Gestiona</h2>
+    <p style="color: var(--muted); font-size: .95rem">Edita o elimina tus proyectos cuando quieras; solo tú puedes hacerlo.</p>
+  </div>
+  <div class="col-md-4">
+    <p class="num mb-1">03</p>
+    <h2 class="h5">Comparte</h2>
+    <p style="color: var(--muted); font-size: .95rem">El listado es público: cualquiera puede ver el portafolio activo.</p>
+  </div>
+</section>

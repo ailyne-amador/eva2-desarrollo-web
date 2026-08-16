@@ -1,0 +1,39 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <p class="micro mb-1">{{#if proyecto.id}}Edición{{else}}Alta{{/if}}</p>
+    <h1 class="h2 mb-4">{{title}}</h1>
+    {{#if error}}<div class="alerta mb-4">{{error}}</div>{{/if}}
+    <form method="post" action="{{action}}">
+      <div class="mb-3">
+        <label class="micro d-block mb-2" for="nombre">Nombre</label>
+        <input class="form-control" id="nombre" name="nombre" value="{{proyecto.nombre}}" required>
+      </div>
+      <div class="mb-3">
+        <label class="micro d-block mb-2" for="descripcion">Descripción</label>
+        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{proyecto.descripcion}}</textarea>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="micro d-block mb-2" for="fechaInicio">Fecha de inicio</label>
+          <input class="form-control" id="fechaInicio" type="date" name="fechaInicio" value="{{#if proyecto.fechaInicio}}{{fecha proyecto.fechaInicio}}{{/if}}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="micro d-block mb-2" for="monto">Monto (CLP)</label>
+          <input class="form-control" id="monto" type="number" step="1" min="0" inputmode="numeric" name="monto" value="{{proyecto.monto}}" required>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="micro d-block mb-2" for="estado">Estado</label>
+        <select class="form-select" id="estado" name="estado">
+          <option value="activo" {{#if (eq proyecto.estado "activo")}}selected{{/if}}>Activo</option>
+          <option value="pausado" {{#if (eq proyecto.estado "pausado")}}selected{{/if}}>Pausado</option>
+          <option value="completado" {{#if (eq proyecto.estado "completado")}}selected{{/if}}>Completado</option>
+        </select>
+      </div>
+      <div class="d-flex gap-3">
+        <button class="btn-ink" type="submit">Guardar</button>
+        <a href="/proyectos" class="btn-line text-decoration-none">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

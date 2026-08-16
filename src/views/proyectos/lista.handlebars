@@ -1,0 +1,51 @@
+<div class="d-flex align-items-end justify-content-between mb-4">
+  <div>
+    <p class="micro mb-1">Listado público</p>
+    <h1 class="h2 mb-0">Proyectos</h1>
+  </div>
+  {{#if usuario}}<a href="/proyectos/nuevo" class="btn-ink text-decoration-none">Nuevo proyecto</a>{{/if}}
+</div>
+{{#if proyectos.length}}
+<div class="table-responsive">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Inicio</th>
+        <th>Estado</th>
+        <th>Monto</th>
+        <th>Creador</th>
+        {{#if usuario}}<th></th>{{/if}}
+      </tr>
+    </thead>
+    <tbody>
+      {{#each proyectos}}
+      <tr>
+        <td class="num">{{this.id}}</td>
+        <td>
+          <div style="font-weight: 500">{{this.nombre}}</div>
+          <div style="color: var(--muted); font-size: .85rem; max-width: 32ch">{{this.descripcion}}</div>
+        </td>
+        <td>{{fecha this.fechaInicio}}</td>
+        <td><span class="badge-estado {{this.estado}}">{{this.estado}}</span></td>
+        <td>{{clp this.monto}}</td>
+        <td style="color: var(--muted)">{{this.creador.nombre}} {{this.creador.apellido}}</td>
+        {{#if ../usuario}}
+        <td class="text-end" style="white-space: nowrap">
+          {{#if (eq this.createdById ../usuario.id)}}
+            <a href="/proyectos/{{this.id}}/editar" class="nav-link-ed d-inline">Editar</a>
+            <form method="post" action="/proyectos/{{this.id}}/eliminar" class="d-inline ms-3">
+              <button type="submit" class="link-danger-ed">Eliminar</button>
+            </form>
+          {{/if}}
+        </td>
+        {{/if}}
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<p class="rule pt-4" style="color: var(--muted)">Aún no hay proyectos publicados.</p>
+{{/if}}
