@@ -46,6 +46,38 @@ npm run typecheck  # verificar tipos
 
 Servidor en `http://localhost:3000` (o `PORT` en el entorno).
 
+## Funcionalidades
+
+### Inicio
+
+![Inicio](docs/images/home.png)
+
+Página de bienvenida pública. Presenta el propósito de la app y resume las tres acciones principales (publicar, gestionar y compartir), con accesos directos al listado de proyectos y al registro de cuenta. No requiere autenticación.
+
+### Registro de usuario
+
+![Registro](docs/images/registro_usuario.png)
+
+Formulario de creación de cuenta (`/registro`). Solicita nombre, apellido, correo y contraseña. La contraseña se almacena hasheada con argon2 y el correo es único por usuario. Tras registrarse, el usuario puede publicar sus propios proyectos.
+
+### Inicio de sesión
+
+![Inicio de sesión](docs/images/inicio_sesion.png)
+
+Formulario de acceso (`/login`) con correo y contraseña. Al autenticarse correctamente se emite un JWT que viaja en una cookie, manteniendo la sesión activa. La barra de navegación muestra el nombre del usuario y la opción de salir.
+
+### Listado de proyectos
+
+![Listado de proyectos](docs/images/visualizacion_proyectos.png)
+
+Listado público (`/proyectos`) visible sin cuenta. Muestra cada proyecto con su nombre, descripción, fecha de inicio, estado, monto formateado en CLP y el nombre de su creador.
+
+### Crear proyecto
+
+![Nuevo proyecto](docs/images/crear_proyecto.png)
+
+Formulario de alta (`/proyectos/nuevo`), disponible solo para usuarios autenticados. Permite ingresar nombre, descripción, fecha de inicio, monto en CLP y estado. El proyecto queda asociado al usuario que lo creó (`created_by`), y solo ese usuario puede editarlo o eliminarlo después.
+
 ## Modelos
 
 | Modelo | Campos |
