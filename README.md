@@ -6,14 +6,14 @@ Gestor de proyectos de marketing. App web MVC en Node.js + TypeScript + Express,
 
 - **Node 24** — ejecuta TypeScript nativamente (type stripping), sin paso de build
 - **Express 5** + **express-handlebars** — vistas en `src/views`
-- **Prisma ORM 7 + PostgreSQL en Supabase** (`@prisma/adapter-pg`) — persistencia relacional
+- **Prisma ORM 7 + PostgreSQL en Docker** (`@prisma/adapter-pg`) — persistencia relacional local
 - **argon2** — hash de contraseñas
 - **JWT en cookie** — sesión
 - TypeScript solo como typechecker (`tsc --noEmit`)
 
 ## Decisión de base de datos
 
-Se utilizó **PostgreSQL en Supabase** porque se necesitaba una base de datos relacional: los datos del proyecto son relacionales por naturaleza. Un `Usuario` puede crear múltiples `Proyecto`, y cada proyecto pertenece a un único usuario mediante la relación `created_by`. PostgreSQL permite representar esta relación con claves foráneas, mantener la integridad referencial y garantizar restricciones como el correo único de cada usuario. Supabase aloja esta base PostgreSQL y la aplicación se conecta mediante Prisma.
+La aplicación usa PostgreSQL local ejecutándose en Docker. Los datos del proyecto son relacionales por naturaleza: un `Usuario` puede crear múltiples `Proyecto`, y cada proyecto pertenece a un único usuario mediante `created_by`. PostgreSQL mantiene esta relación con claves foráneas y garantiza restricciones como el correo único de cada usuario.
 
 ## CRUD del proyecto
 
@@ -66,6 +66,7 @@ La autorización de actualización y eliminación verifica que el usuario autent
 ## Requisitos
 
 - Node.js 24+
+- Docker Desktop
 
 ## Instalación
 
@@ -75,16 +76,17 @@ cd eva2-desarrollo-web
 npm install
 ```
 
-Crear `.env` en la raíz con la conexión PostgreSQL de Supabase:
+Crear `.env` en la raíz:
 
 ```env
-DATABASE_URL="postgresql://postgres.<PROJECT_REF>:<PASSWORD>@aws-0-<REGION>.pooler.supabase.com:5432/postgres"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eva2"
 JWT_SECRET="cambia-esto"
 ```
 
-Aplicar las migraciones versionadas en Supabase y regenerar el cliente:
+Levantar PostgreSQL local y aplicar las migraciones. La base comienza vacía:
 
 ```bash
+docker compose up -d
 npx prisma migrate deploy
 npx prisma generate
 ```
@@ -153,6 +155,6 @@ prisma/
 
 - ESM (`"type": "module"`); imports entre archivos con extensión `.ts` explícita.
 - Sin enums ni namespaces de TS (type stripping no los soporta).
-- PostgreSQL en Supabase es la fuente de persistencia; la aplicación local necesita conexión a Internet.
+- PostgreSQL local en Docker es la fuente de persistencia; no se migran datos de Supabase.
 - No versionar `.env` ni sus credenciales.
 - Autorización por `created_by`: editar/eliminar verifica que el usuario autenticado sea el creador.
